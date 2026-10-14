@@ -1236,14 +1236,15 @@ async function send(e){
 data.set('date_envoi', new Date().toLocaleString('fr-FR'));
 data.set('source', 'Invitation Karima & Gwen');
 
-await fetch(GOOGLE_SCRIPT_URL, {
-  method: 'POST',
-  body: data,
-  mode: 'no-cors'
-});
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      body: data,
+      mode: 'no-cors'
+    });
     form.style.display='none';
     document.getElementById('thanks').classList.remove('hidden');
-  }catch(err){
+  } catch(err){
     btn.disabled=false;
     btn.textContent=originalLabel || 'Confirmer ma réponse';
     alert('Impossible d’envoyer la réponse. Vérifiez votre connexion puis réessayez.');
