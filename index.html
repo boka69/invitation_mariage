@@ -1232,13 +1232,16 @@ async function send(e){
   btn.disabled=true;
   const originalLabel=btn.textContent;
   btn.textContent='Envoi en cours…';
-  const data=new FormData(form);
-  data.set('date_envoi',new Date().toLocaleString('fr-FR'));
-  data.set('source','Invitation Karima & Gwen');
-  data.set('spreadsheet_id','1VBDWHoiQUSzFxHFEGkGtGZ2-fPMGGj1xDZq3VCDXmIg');
-  data.set('sheet_id','1819964027');
-  try{
-    await fetch(GOOGLE_SCRIPT_URL,{method:'POST',body:data,mode:'no-cors'});
+  const data = new URLSearchParams(new FormData(form));
+
+data.set('date_envoi', new Date().toLocaleString('fr-FR'));
+data.set('source', 'Invitation Karima & Gwen');
+
+await fetch(GOOGLE_SCRIPT_URL, {
+  method: 'POST',
+  body: data,
+  mode: 'no-cors'
+});
     form.style.display='none';
     document.getElementById('thanks').classList.remove('hidden');
   }catch(err){
