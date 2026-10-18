@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#000">
 <title>Karima & Gwen</title>
 <style>
 * { box-sizing: border-box; }
@@ -12,40 +12,26 @@ html, body {
   margin: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   background: #000;
 }
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 video {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  display: block;
 }
 </style>
 </head>
 <body>
-<video id="video" autoplay muted loop playsinline>
-  <source src="Invitation_Karima_Gwen_finale.mp4" type="video/mp4">
+<video controls autoplay playsinline>
+  <source src="Invitation_Karima_Gwen_avec_musique.mp4" type="video/mp4">
+  Votre navigateur ne peut pas lire cette vidéo.
 </video>
-<audio id="musique" loop>
-  <source src="Dadju-Wouli-Liya.mp3" type="audio/mpeg">
-</audio>
-<script>
-const video = document.getElementById('video');
-const audio = document.getElementById('musique');
-
-async function demarrer() {
-  try {
-    await video.play();
-    audio.muted = false;
-    await audio.play();
-    document.removeEventListener('click', demarrer);
-    document.removeEventListener('touchstart', demarrer);
-  } catch (e) {}
-}
-document.addEventListener('click', demarrer);
-document.addEventListener('touchstart', demarrer);
-</script>
 </body>
 </html>
 ```
