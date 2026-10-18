@@ -2,108 +2,50 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="theme-color" content="#000000">
-  <title>Invitation Karima & Gwen</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      overflow: hidden;
-    }
-
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    video {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: #000;
-    }
-
-    #soundButton {
-      position: fixed;
-      bottom: 25px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
-      padding: 14px 22px;
-      border: 0;
-      border-radius: 30px;
-      background: #fff;
-      color: #111;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    #soundButton.hidden {
-      display: none;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+<title>Karima & Gwen</title>
+<style>
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+</style>
 </head>
-
 <body>
-  <video id="invitation"
-         autoplay
-         muted
-         playsinline
-         preload="auto">
-    <source src="Invitation_karima_gwen.mp4"
-            type="video/mp4">
-    Votre navigateur ne prend pas en charge la vidéo.
-  </video>
+<video id="video" autoplay muted loop playsinline>
+  <source src="Invitation_Karima_Gwen_finale.mp4" type="video/mp4">
+</video>
+<audio id="musique" loop>
+  <source src="Dadju-Wouli-Liya.mp3" type="audio/mpeg">
+</audio>
+<script>
+const video = document.getElementById('video');
+const audio = document.getElementById('musique');
 
-  <button id="soundButton">
-    ▶ Voir l’invitation avec le son
-  </button>
-
-  <script>
-    const video = document.getElementById("invitation");
-    const button = document.getElementById("soundButton");
-
-    video.play().catch(() => {
-      button.classList.remove("hidden");
-    });
-
-    button.addEventListener("click", async () => {
-      try {
-        video.muted = false;
-        await video.play();
-
-        if (video.requestFullscreen) {
-          await video.requestFullscreen();
-        } else if (video.webkitEnterFullscreen) {
-          video.webkitEnterFullscreen();
-        }
-
-        button.classList.add("hidden");
-      } catch (error) {
-        video.muted = true;
-        button.textContent = "▶ Appuyez pour lancer l’invitation";
-      }
-    });
-
-    video.addEventListener("playing", () => {
-      if (!video.muted) {
-        button.classList.add("hidden");
-      }
-    });
-  </script>
+async function demarrer() {
+  try {
+    await video.play();
+    audio.muted = false;
+    await audio.play();
+    document.removeEventListener('click', demarrer);
+    document.removeEventListener('touchstart', demarrer);
+  } catch (e) {}
+}
+document.addEventListener('click', demarrer);
+document.addEventListener('touchstart', demarrer);
+</script>
 </body>
 </html>
 ```
