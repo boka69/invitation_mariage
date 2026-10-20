@@ -78,8 +78,13 @@
             ) {
               event.preventDefault();
               event.stopPropagation();
-              invitation.remove();
-              document.body.style.background = "#f5f0e8";
+
+              // Revenir à la page précédemment visitée dans le navigateur.
+              try {
+                window.parent.history.back();
+              } catch (erreur) {
+                window.history.back();
+              }
               return;
             }
           }
