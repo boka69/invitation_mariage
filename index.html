@@ -94,7 +94,7 @@
             }
 
             // 3. Secours Android / Navigateurs mobiles : si l'onglet reste ouvert après 300ms,
-            // on redirige vers une page sûre (ex: Google ou l'accueil) au lieu de laisser une page vide.
+            // on redirige vers une page sûre (ex: Google) au lieu de bloquer la page.
             setTimeout(function() {
                 if (!document.hidden) {
                     window.location.href = "https://www.google.com";
