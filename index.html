@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Karima & Gwen</title>
+  <title>Karima &amp; Gwen</title>
 
   <style>
     html, body {
@@ -41,38 +40,54 @@
     invitation.addEventListener("load", function () {
       try {
         const doc = invitation.contentDocument;
+        if (!doc) return;
 
+        // Capture le clic avant les autres scripts de l'invitation.
         doc.addEventListener("click", function (event) {
-          let element = event.target;
+          const chemin = typeof event.composedPath === "function"
+            ? event.composedPath()
+            : [];
 
-          for (let i = 0; element && i < 6; i++) {
+          let candidats = chemin.filter(el => el && el.nodeType === 1);
+
+          // Compatibilité si composedPath n'est pas disponible.
+          if (candidats.length === 0) {
+            let el = event.target;
+            while (el && el.nodeType === 1) {
+              candidats.push(el);
+              el = el.parentElement;
+            }
+          }
+
+          for (const element of candidats) {
             const texte = (
               element.innerText ||
+              element.textContent ||
               element.value ||
-              element.getAttribute("aria-label") ||
+              element.getAttribute?.("aria-label") ||
+              element.getAttribute?.("title") ||
               ""
-            ).trim().toLowerCase();
+            ).replace(/\s+/g, " ").trim().toLowerCase();
+
+            const estBouton =
+              element.matches?.("button, a, input, [role='button'], [onclick]");
 
             if (
-              texte === "sortir" ||
-              texte === "sortir ×" ||
-              texte === "quitter"
+              (estBouton && /\b(sortir|quitter)\b/.test(texte)) ||
+              (texte === "sortir" || texte === "quitter" || texte === "sortir ×")
             ) {
               event.preventDefault();
+              event.stopPropagation();
               invitation.remove();
               document.body.style.background = "#f5f0e8";
               return;
             }
-
-            element = element.parentElement;
           }
         }, true);
-
       } catch (erreur) {
-        console.error("Impossible de détecter le clic :", erreur);
+        console.error("Impossible de détecter le clic dans l'invitation :", erreur);
       }
     });
   </script>
 </body>
 </html>
-```
