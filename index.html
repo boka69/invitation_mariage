@@ -1,58 +1,97 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#000">
-<title>Karima & Gwen</title>
-<style>
-* { box-sizing: border-box; }
-html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  background: #000;
-}
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-video {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Karima &amp; Gwen</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0b211d;
+    }
+
+    iframe {
+      position: fixed;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
 </head>
+
 <body>
-<iframe
-  src="./20_10_New__Invitation_Karima_Gwen_musique_Dadju.html"
-  style="width:100%; height:100vh; border:none;"
-  title="Invitation Karima et Gwen"
-  id="invitation-frame">
-</iframe>
+  <iframe
+    id="invitation"
+    src="./20_10_New__Invitation_Karima_Gwen_musique_Dadju.html"
+    title="Invitation de mariage">
+  </iframe>
 
-<script>
-// Intercepte les actions ou écoute si le bouton "Sortir" est cliqué/signalé depuis l'iframe
-window.addEventListener('message', function(event) {
-    if (event.data === 'sortir' || event.data === 'close') {
-        sortirPage();
-    }
-});
+  <script>
+    const invitation = document.getElementById("invitation");
 
-function sortirPage() {
-    if (window.history.length > 1) {
+    // Fonction pour gérer l'action de sortie
+    function quitterPage() {
+      // 1. Essaie de retourner à la page précédente dans l'historique
+      if (window.history.length > 1) {
         window.history.back();
-    } else {
+      } else {
+        // 2. Si pas d'historique (ex: lien direct), redirige ou ferme l'onglet
         window.close();
+        // Option de secours si window.close() est bloqué par le navigateur :
+        // window.location.href = "about:blank"; 
+      }
     }
-    // Secours si le navigateur Android bloque la fermeture ou le retour
-    setTimeout(function() {
-        window.location.href = "about:blank";
-    }, 300);
-}
-</script>
+
+    invitation.addEventListener("load", function () {
+      try {
+        const doc = invitation.contentDocument || invitation.contentWindow.document;
+        if (!doc) return;
+
+        // Écoute tous les clics à l'intérieur de l'invitation
+        doc.addEventListener("click", function (event) {
+          // On cherche si l'élément cliqué ou l'un de ses parents contient "sortir" ou "quitter"
+          let target = event.target;
+
+          while (target && target !== doc.body) {
+            const texte = (
+              target.innerText ||
+              target.textContent ||
+              target.getAttribute?.("aria-label") ||
+              target.getAttribute?.("title") ||
+              ""
+            ).toLowerCase();
+
+            const idOuClasse = (
+              (target.id || "") + " " + (target.className || "")
+            ).toLowerCase();
+
+            // Détection si c'est le bouton de sortie
+            const contientMotCle = /sortir|quitter/.test(texte) || /sortir|quitter/.test(idOuClasse);
+
+            if (contientMotCle) {
+              event.preventDefault();
+              event.stopPropagation();
+              quitterPage();
+              return;
+            }
+
+            target = target.parentElement;
+          }
+        }, true);
+
+      } catch (erreur) {
+        console.error("Impossible d'accéder au contenu de l'iframe :", erreur);
+      }
+    });
+  </script>
 </body>
 </html>
