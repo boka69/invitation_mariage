@@ -40,14 +40,10 @@
 
     // Fonction pour gérer l'action de sortie
     function quitterPage() {
-      // 1. Essaie de retourner à la page précédente dans l'historique
       if (window.history.length > 1) {
         window.history.back();
       } else {
-        // 2. Si pas d'historique (ex: lien direct), redirige ou ferme l'onglet
         window.close();
-        // Option de secours si window.close() est bloqué par le navigateur :
-        // window.location.href = "about:blank"; 
       }
     }
 
@@ -56,9 +52,7 @@
         const doc = invitation.contentDocument || invitation.contentWindow.document;
         if (!doc) return;
 
-        // Écoute tous les clics à l'intérieur de l'invitation
         doc.addEventListener("click", function (event) {
-          // On cherche si l'élément cliqué ou l'un de ses parents contient "sortir" ou "quitter"
           let target = event.target;
 
           while (target && target !== doc.body) {
@@ -74,10 +68,16 @@
               (target.id || "") + " " + (target.className || "")
             ).toLowerCase();
 
-            // Détection si c'est le bouton de sortie
-            const contientMotCle = /sortir|quitter/.test(texte) || /sortir|quitter/.test(idOuClasse);
+            // Si le clic concerne "marhaba", on laisse l'invitation faire son travail normalement (on ne fait rien)
+            const estMarhaba = /marhaba|bienvenue/.test(texte) || /marhaba|bienvenue/.test(idOuClasse);
+            if (estMarhaba) {
+              return; 
+            }
 
-            if (contientMotCle) {
+            // On cible uniquement le bouton de sortie
+            const estSortie = /sortir|quitter|fermer/.test(texte) || /sortir|quitter|fermer/.test(idOuClasse);
+
+            if (estSortie) {
               event.preventDefault();
               event.stopPropagation();
               quitterPage();
