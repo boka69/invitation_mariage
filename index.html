@@ -1,9 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Karima & Gwen</title>
+
   <style>
     html, body {
       margin: 0;
@@ -25,10 +27,52 @@
     }
   </style>
 </head>
+
 <body>
   <iframe
+    id="invitation"
     src="./20_10_New__Invitation_Karima_Gwen_musique_Dadju.html"
     title="Invitation de mariage">
   </iframe>
+
+  <script>
+    const invitation = document.getElementById("invitation");
+
+    invitation.addEventListener("load", function () {
+      try {
+        const doc = invitation.contentDocument;
+
+        doc.addEventListener("click", function (event) {
+          let element = event.target;
+
+          for (let i = 0; element && i < 6; i++) {
+            const texte = (
+              element.innerText ||
+              element.value ||
+              element.getAttribute("aria-label") ||
+              ""
+            ).trim().toLowerCase();
+
+            if (
+              texte === "sortir" ||
+              texte === "sortir ×" ||
+              texte === "quitter"
+            ) {
+              event.preventDefault();
+              invitation.remove();
+              document.body.style.background = "#f5f0e8";
+              return;
+            }
+
+            element = element.parentElement;
+          }
+        }, true);
+
+      } catch (erreur) {
+        console.error("Impossible de détecter le clic :", erreur);
+      }
+    });
+  </script>
 </body>
 </html>
+```
