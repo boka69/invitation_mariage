@@ -1,98 +1,107 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Karima &amp; Gwen</title>
-
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    iframe {
-      position: fixed;
-      inset: 0;
-      display: block;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      margin: 0;
-      padding: 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitation Karima & Gwen</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f7f5f0;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 25px;
+        }
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        .btn-primary {
+            background-color: #4a7c59;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #3b6346;
+        }
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+    </style>
 </head>
-
 <body>
-  <iframe
-    id="invitation"
-    src="./20_10_New__Invitation_Karima_Gwen_musique_Dadju.html"
-    title="Invitation de mariage">
-  </iframe>
 
-  <script>
-    const invitation = document.getElementById("invitation");
+    <div class="container">
+        <h1>Invitation Karima & Gwen</h1>
+        <p>Nous sommes ravis de vous inviter à célébrer ce moment spécial avec nous.</p>
+        
+        <div class="actions">
+            <a href="#confirmer" class="btn btn-primary">Confirmer ma présence</a>
+            <button id="btn-sortir" class="btn btn-secondary">Sortir</button>
+        </div>
+    </div>
 
-    invitation.addEventListener("load", function () {
-      try {
-        const doc = invitation.contentDocument;
-        if (!doc) return;
+    <script>
+        document.getElementById('btn-sortir').addEventListener('click', function(e) {
+            e.preventDefault();
 
-        // Capture le clic avant les autres scripts de l'invitation.
-        doc.addEventListener("click", function (event) {
-          const chemin = typeof event.composedPath === "function"
-            ? event.composedPath()
-            : [];
-
-          let candidats = chemin.filter(el => el && el.nodeType === 1);
-
-          // Compatibilité si composedPath n'est pas disponible.
-          if (candidats.length === 0) {
-            let el = event.target;
-            while (el && el.nodeType === 1) {
-              candidats.push(el);
-              el = el.parentElement;
-            }
-          }
-
-          for (const element of candidats) {
-            const texte = (
-              element.innerText ||
-              element.textContent ||
-              element.value ||
-              element.getAttribute?.("aria-label") ||
-              element.getAttribute?.("title") ||
-              ""
-            ).replace(/\s+/g, " ").trim().toLowerCase();
-
-            const estBouton =
-              element.matches?.("button, a, input, [role='button'], [onclick]");
-
-            if (
-              (estBouton && /\b(sortir|quitter)\b/.test(texte)) ||
-              (texte === "sortir" || texte === "quitter" || texte === "sortir ×")
-            ) {
-              event.preventDefault();
-              event.stopPropagation();
-
-              // Revenir à la page précédemment visitée dans le navigateur.
-              try {
-                window.parent.history.back();
-              } catch (erreur) {
+            // 1. Tente de retourner en arrière dans l'historique si possible
+            if (window.history.length > 1 && document.referrer) {
                 window.history.back();
-              }
-              return;
+            } else {
+                // 2. Tente de fermer la fenêtre/l'onglet
+                window.close();
             }
-          }
-        }, true);
-      } catch (erreur) {
-        console.error("Impossible de détecter le clic dans l'invitation :", erreur);
-      }
-    });
-  </script>
+
+            // 3. Secours Android / Navigateurs mobiles : si l'onglet reste ouvert après 300ms,
+            // on redirige vers une page sûre (ex: Google ou l'accueil) au lieu de laisser une page vide.
+            setTimeout(function() {
+                if (!document.hidden) {
+                    window.location.href = "https://www.google.com";
+                }
+            }, 300);
+        });
+    </script>
+
 </body>
 </html>
