@@ -38,7 +38,6 @@
   <script>
     const invitation = document.getElementById("invitation");
 
-    // Fonction pour gérer l'action de sortie
     function quitterPage() {
       if (window.history.length > 1) {
         window.history.back();
@@ -53,39 +52,21 @@
         if (!doc) return;
 
         doc.addEventListener("click", function (event) {
-          let target = event.target;
+          const target = event.target;
+          
+          // On récupère le texte exact de l'élément cliqué (et de son enfant direct si c'est une icône/span)
+          const texte = (target.innerText || target.textContent || "").trim().toLowerCase();
+          const idOuClasse = ((target.id || "") + " " + (target.className || "")).toLowerCase();
 
-          while (target && target !== doc.body) {
-            const texte = (
-              target.innerText ||
-              target.textContent ||
-              target.getAttribute?.("aria-label") ||
-              target.getAttribute?.("title") ||
-              ""
-            ).toLowerCase();
+          // On vérifie STRICTEMENT si c'est le bouton "sortir" ou "quitter" (on ignore complètement MARHABA ici)
+          const estLeBoutonSortir = texte === "sortir" || texte === "quitter" || idOuClasse.includes("sortir") || idOuClasse.includes("quitter");
 
-            const idOuClasse = (
-              (target.id || "") + " " + (target.className || "")
-            ).toLowerCase();
-
-            // Si le clic concerne "marhaba", on laisse l'invitation faire son travail normalement (on ne fait rien)
-            const estMarhaba = /marhaba|bienvenue/.test(texte) || /marhaba|bienvenue/.test(idOuClasse);
-            if (estMarhaba) {
-              return; 
-            }
-
-            // On cible uniquement le bouton de sortie
-            const estSortie = /sortir|quitter|fermer/.test(texte) || /sortir|quitter|fermer/.test(idOuClasse);
-
-            if (estSortie) {
-              event.preventDefault();
-              event.stopPropagation();
-              quitterPage();
-              return;
-            }
-
-            target = target.parentElement;
+          if (estLeBoutonSortir) {
+            event.preventDefault();
+            event.stopPropagation();
+            quitterPage();
           }
+          // Si ce n'est pas "sortir", on laisse l'invitation faire sa vie normalement (notamment MARHABA)
         }, true);
 
       } catch (erreur) {
